@@ -82,8 +82,8 @@ def init_session_state() -> None:
 def render_ui() -> None:
     """Render the dashboard UI components."""
     st.set_page_config(
-        page_title="Pomodoro & Focus Dashboard",
-        page_icon="🍅",
+        page_title="⏳ Pomodoro & Focus Dashboard ⏳",
+        page_icon="⏳",
         layout="centered",
     )
 
@@ -143,7 +143,7 @@ def render_ui() -> None:
         unsafe_allow_html=True,
     )
 
-    st.markdown("<h1 class='main-title'>🍅 Personal Pomodoro & Focus Dashboard</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='main-title'>⏳ Personal Pomodoro & Focus Dashboard ⏳</h1>", unsafe_allow_html=True)
     st.markdown("<p class='subtitle'>Stay organized, eliminate distractions, and track deep work cycles.</p>", unsafe_allow_html=True)
 
     # Metrics row
