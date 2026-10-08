@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⏳ Personal Pomodoro & Focus Dashboard ⏳</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      --border: #334155;
+      --primary: #38bdf8;
+      --primary-hover: #0284c7;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #1e3a8a;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 2rem 1rem;
+      min-height: 100vh;
+    }
+    .container {
+      width: 100%;
+      max-width: 650px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+    }
+    .subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .metric-card {
+      background: #1e293b;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+      text-align: center;
+    }
+    .metric-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .metric-val {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--primary);
+      margin-top: 0.3rem;
+    }
+    .task-input-box {
+      margin-bottom: 1.5rem;
+    }
+    .task-input-box label {
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 0.4rem;
+      color: var(--text-muted);
+    }
+    .task-input-box input {
+      width: 100%;
+      background: #1e293b;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+    }
+    .task-input-box input:focus {
+      border-color: var(--primary);
+    }
+    .timer-box {
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: 20px;
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+      margin-bottom: 1.5rem;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 0.4rem 1.2rem;
+      border-radius: 9999px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      background-color: var(--accent);
+      color: #e0f2fe;
+      margin-bottom: 1rem;
+    }
+    .timer-digits {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 5rem;
+      font-weight: 700;
+      letter-spacing: 5px;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+    .progress-container {
+      background: #334155;
+      height: 10px;
+      border-radius: 9999px;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #0284c7, #38bdf8);
+      transition: width 0.3s ease;
+    }
+    .progress-caption {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-align: right;
+    }
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin: 1.5rem 0;
+    }
+    button {
+      padding: 0.85rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-start {
+      background: #0284c7;
+      color: #fff;
+    }
+    .btn-start:hover {
+      background: #0369a1;
+    }
+    .btn-pause {
+      background: #334155;
+      color: #fff;
+    }
+    .btn-pause:hover {
+      background: #475569;
+    }
+    .btn-reset {
+      background: #1e293b;
+      border: 1px solid var(--border);
+      color: #cbd5e1;
+    }
+    .btn-reset:hover {
+      background: #334155;
+    }
+    .sound-section {
+      background: #1e293b;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    .sound-section h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.8rem;
+    }
+    select {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+      margin-bottom: 1rem;
+    }
+    .sound-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      font-style: italic;
+    }
+    audio {
+      width: 100%;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>🍅 Personal Pomodoro & Focus Dashboard</h1>
+    <p class="subtitle">Stay organized, eliminate distractions, and track deep work cycles.</p>
+
+    <!-- Metrics -->
+    <div class="metrics">
+      <div class="metric-card">
+        <div class="metric-label">Sessions Completed</div>
+        <div class="metric-val" id="completedMetric">0 🏆</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Total Deep Work</div>
+        <div class="metric-val" id="deepWorkMetric">0 mins ⚡</div>
+      </div>
+    </div>
+
+    <!-- Task Input -->
+    <div class="task-input-box">
+      <label for="taskInput">🎯 What are you focusing on right now?</label>
+      <input type="text" id="taskInput" placeholder="e.g., Coding core features / reviewing documentation">
+    </div>
+
+    <!-- Timer Card -->
+    <div class="timer-box">
+      <div class="status-badge" id="statusBadge">Paused / Ready to Focus ⏳</div>
+      <div class="timer-digits" id="timerDigits">25:00</div>
+      
+      <!-- Progress Bar -->
+      <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <div class="progress-caption" id="progressCaption">Progress: 0% (25:00 remaining of 25:00)</div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <button class="btn-start" id="startBtn">▶️ Start</button>
+      <button class="btn-pause" id="pauseBtn">⏸️ Pause</button>
+      <button class="btn-reset" id="resetBtn">🔄 Reset</button>
+    </div>
+
+    <!-- Ambient Sound Section -->
+    <div class="sound-section">
+      <h3>🎧 Focus Ambient Sound</h3>
+      <select id="soundSelect">
+        <option value="rain">🌧️ Rain (Heavy Rainfall)</option>
+        <option value="cafe">☕ Café (Coffee Shop Ambience)</option>
+        <option value="forest">🌲 Forest (Birds & Gentle Breeze)</option>
+        <option value="white_noise">📻 White Noise (Static Focus)</option>
+        <option value="mute">🔇 Silence (Mute)</option>
+      </select>
+      <p class="sound-desc" id="soundDesc">Gentle, steady rainfall to calm your mind and wash away distractions.</p>
+      <audio id="audioPlayer" controls loop>
+        <source id="audioSource" src="https://actions.google.com/sounds/v1/weather/rain_heavy.ogg" type="audio/ogg">
+        Your browser does not support audio elements.
+      </audio>
+    </div>
+  </div>
+
+  <script>
+    const TOTAL_SECONDS = 25 * 60;
+    let remainingSeconds = TOTAL_SECONDS;
+    let timerInterval = null;
+    let completedSessions = 0;
+
+    const timerDigits = document.getElementById("timerDigits");
+    const statusBadge = document.getElementById("statusBadge");
+    const progressBar = document.getElementById("progressBar");
+    const progressCaption = document.getElementById("progressCaption");
+    const startBtn = document.getElementById("startBtn");
+    const pauseBtn = document.getElementById("pauseBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const completedMetric = document.getElementById("completedMetric");
+    const deepWorkMetric = document.getElementById("deepWorkMetric");
+    const soundSelect = document.getElementById("soundSelect");
+    const soundDesc = document.getElementById("soundDesc");
+    const audioPlayer = document.getElementById("audioPlayer");
+    const audioSource = document.getElementById("audioSource");
+
+    const sounds = {
+      rain: {
+        url: "https://actions.google.com/sounds/v1/weather/rain_heavy.ogg",
+        desc: "Gentle, steady rainfall to calm your mind and wash away distractions."
+      },
+      cafe: {
+        url: "https://actions.google.com/sounds/v1/ambiences/coffee_shop.ogg",
+        desc: "Warm coffee shop ambiance with gentle background chatter and espresso sounds."
+      },
+      forest: {
+        url: "https://actions.google.com/sounds/v1/ambiences/outdoor_summer_day_in_forest.ogg",
+        desc: "Peaceful woodland atmosphere with soft breeze and cheerful birdsong."
+      },
+      white_noise: {
+        url: "https://actions.google.com/sounds/v1/ambiences/white_noise.ogg",
+        desc: "Continuous soothing static frequencies for deep concentration."
+      },
+      mute: {
+        url: "",
+        desc: "Pure silence for deep, undistracted concentration."
+      }
+    };
+
+    function formatTime(secs) {
+      const m = Math.floor(secs / 60);
+      const s = secs % 60;
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    function updateDisplay() {
+      const timeStr = formatTime(remainingSeconds);
+      timerDigits.textContent = timeStr;
+      const progressRatio = (TOTAL_SECONDS - remainingSeconds) / TOTAL_SECONDS;
+      const pct = Math.round(progressRatio * 100);
+      progressBar.style.width = `${pct}%`;
+      progressCaption.textContent = `Progress: ${pct}% (${timeStr} remaining of 25:00)`;
+    }
+
+    function startTimer() {
+      if (timerInterval) return;
+      if (remainingSeconds <= 0) remainingSeconds = TOTAL_SECONDS;
+      statusBadge.textContent = "Focus Mode Active 🎯";
+      statusBadge.style.backgroundColor = "#0284c7";
+      startBtn.disabled = true;
+
+      timerInterval = setInterval(() => {
+        if (remainingSeconds > 0) {
+          remainingSeconds--;
+          updateDisplay();
+        } else {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          startBtn.disabled = false;
+          completedSessions++;
+          completedMetric.textContent = `${completedSessions} 🏆`;
+          deepWorkMetric.textContent = `${completedSessions * 25} mins ⚡`;
+          statusBadge.textContent = "Session Complete! Take a break ☕";
+          statusBadge.style.backgroundColor = "#16a34a";
+          alert("🎉 Pomodoro session finished! Great job. Time for a 5-minute break!");
+        }
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        startBtn.disabled = false;
+        statusBadge.textContent = "Paused ⏸️";
+        statusBadge.style.backgroundColor = "#475569";
+      }
+    }
+
+    function resetTimer() {
+      pauseTimer();
+      remainingSeconds = TOTAL_SECONDS;
+      statusBadge.textContent = "Ready to Focus ⏳";
+      statusBadge.style.backgroundColor = "var(--accent)";
+      startBtn.disabled = false;
+      updateDisplay();
+    }
+
+    startBtn.addEventListener("click", startTimer);
+    pauseBtn.addEventListener("click", pauseTimer);
+    resetBtn.addEventListener("click", resetTimer);
+
+    soundSelect.addEventListener("change", (e) => {
+      const choice = sounds[e.target.value];
+      soundDesc.textContent = choice.desc;
+      if (choice.url) {
+        audioSource.src = choice.url;
+        audioPlayer.load();
+        audioPlayer.play().catch(() => {});
+        audioPlayer.style.display = "block";
+      } else {
+        audioPlayer.pause();
+        audioPlayer.style.display = "none";
+      }
+    });
+
+    updateDisplay();
+  </script>
+</body>
+</html>
